@@ -1,0 +1,22 @@
+{
+  "name": "xmediaapp",
+  "version": "1.0.0",
+  "description": "Home Media Application",
+  "main": "server.js",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "local-network-scanner": "^0.1.1",
+    "moment": "^2.18.1",
+    "simple-ssh": "^1.0.0",
+    "ssh2": "^0.5.5"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^3.5.3"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "author": "Justin Herter",
+  "license": "ISC"
+}
