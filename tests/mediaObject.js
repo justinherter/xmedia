@@ -3,9 +3,7 @@ require('dotenv').load();
 const FS = require("fs");
 const Expect = require("chai").expect;
 const Media = require('../models/media').Media;
-const HomeDirectory = (process.env.ENVIRONMENT === 'development') 
-        ? '/Users/home/home/media/' 
-        : '/home/media/';
+const HomeDirectory = process.env.HOME_DIRECTORY || "/home/media/";
 const TocPath = `${HomeDirectory}Toc.json`
 
 describe("Media Object Mutations", () => {
@@ -20,7 +18,8 @@ describe("Media Object Mutations", () => {
     describe("Archive Media Object", () => {
         it("Archives the object", () => {
             media.archive()
-            Expect(media.archived);
+            Expect(media.isArchived).to.equal(true);
+            Expect(media.dateArchived).to.not.equal(true);
         })
     })
 
