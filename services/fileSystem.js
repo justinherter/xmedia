@@ -1,15 +1,21 @@
+'use strict';
 const FS = require('fs');
 
 module.exports.FileSystem = class FileSystem {
-    exists(path){
+    static exists(path){
         return FS.existsSync(path);
     }
-    createIfNotExists(path, data){
+    static createIfNotExists(path, data){
         let e = this.exists(path);
         if (!e) this.save(path, data);
     }
-    save(path, data) {
+    static save(path, data) {
         return FS.writeFileSync(path, JSON.stringify(data));
     }
-    
+    static readJson(path){
+        return JSON.parse(FS.readFileSync(path));
+    }
+    static read(path){
+        return FS.readFileSync(path);
+    }
 }

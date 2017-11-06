@@ -1,9 +1,9 @@
 "use strict";
-const FS = require('fs');
+const FileSystem = require('../services/fileSystem').FileSystem;
 const Moment = require('moment');
 const homeDirectory = process.env.HOME_DIRECTORY;
-const tocPath = homeDirectory + 'Toc.json';
-const TOC = JSON.parse(FS.readFileSync(tocPath));
+const tocPath = __dirname + '/../lib/toc.json';
+const TOC = FileSystem.readJson(tocPath);
 const UUID = require('uuid4');
 
 module.exports.Media = class Media {
@@ -21,6 +21,7 @@ module.exports.Media = class Media {
         this.replace = metaData.replace || false;
         this.subtype = metaData.subtype || '';
         this.type = type || metaData.type || 'unknown';
+        
     }
     archive(){
         this.isArchived = true;
@@ -31,7 +32,7 @@ module.exports.Media = class Media {
         this.lastUpdated = new Moment();
         let index = TOC.findIndex((object) => object.id === this.id);
         TOC[index] = this.selectProps();
-        FS.writeFileSync(tocPath, JSON.stringify(TOC));
+        FileSystem.save(tocPath, TOC);
         return;
     }
     selectProps(){
@@ -40,6 +41,10 @@ module.exports.Media = class Media {
             props[key] = this[key];
         });
         return props;
+    }
+    addToLibrary(newMedia){
+        TOC.push(newMedia);
+        FileSystem.save(this.tocDirectory, TOC);
     }
     toggleActive(){
         this.isActive = !this.isActive;
