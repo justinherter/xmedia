@@ -4,5 +4,6 @@ module.exports.FilePathObject = class FilePathObject {
         this.basePath = obj.basePath || "";
         this.subPath = obj.subPath || "";
         this.fileName = obj.fileName || "";
+        this.simpleFileName = obj.fileName || "";
     }
 }

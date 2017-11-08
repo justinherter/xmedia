@@ -16,7 +16,7 @@
     "mocha": "^3.5.3"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha inspect --reporter spec"
   },
   "author": "Justin Herter",
   "license": "ISC"

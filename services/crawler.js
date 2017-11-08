@@ -5,6 +5,9 @@ const Media = require('../models/media').Media;
 const Formatting = require('./formatting').Formatting;
 const FileSystem = require('./fileSystem').FileSystem;
 const FilePathObject = require('../models/filePathObject').FilePathObject;
+const PatternPath = __dirname + '/../lib/patterns.json';
+
+const Patterns = FileSystem.readJson(PatternPath);
 
 module.exports.Crawler = class Crawler {
     constructor(sftp){
@@ -16,9 +19,7 @@ module.exports.Crawler = class Crawler {
         this.sftp = sftp;
         this.complete = false;
         this.filePathObjectList = [];
-        this.omitFileNamePattern = [
-            '.', '..', 'Other', 'Subs'
-        ]
+        this.working = false;
     }
     
     fetchShowBoxDownloads(){
@@ -80,19 +81,6 @@ module.exports.Crawler = class Crawler {
         // console.log(isdir);
         return isdir;
     }
-    traverseDirectoryTree(obj){
-        return (this.isDirectory(obj)) 
-        ? () => {
-            let fetchList = this.readDirectory(this.showBoxDirectory)
-            fetchList.then((list) => {
-                list.forEach((object, index) => {
-
-                })
-            })
-        }
-        : obj;
-
-    }
     fileObjectIndex(fileName){
         return this.filePathObjectList.findIndex(fpo => {
             return (fpo.subPath.indexOf(fileName) > -1 && fpo.fileName === fileName)
@@ -124,6 +112,10 @@ module.exports.Crawler = class Crawler {
             });
         })
     }
+    isFileTypeExcluded(fileName) {
+        let ext = fileName.split('.').pop().toLowerCase();
+        return Patterns.fileExtensionExclusions.includes(ext);
+    }
     fetchAllFiles(filePathObject){  
         let watch = false;
         let {basePath, subPath, fileName} = filePathObject;
@@ -132,11 +124,9 @@ module.exports.Crawler = class Crawler {
         fileList.then((list) => {
             if (list.length === 0) {
                 this.dropItemFromList(filePathObject);
-                console.log(filePathObject);
-                console.log(list);
             } else {
                 list.forEach((item) => {
-                    if (!this.omitFileNamePattern.includes(item.filename)){
+                    if (!Patterns.directoryNameExclusions.includes(item.filename)){
                         let {exists, index, isDirectory} = this.processDirectoryItem(item);
                         let fpo = (exists)
                             ? this.filePathObjectList[index]
@@ -148,9 +138,9 @@ module.exports.Crawler = class Crawler {
                         if(isDirectory) {
                             fpo.subPath += `${item.filename}/`;
                             this.fetchAllFiles(fpo)
-                        } else {
+                        } else if (typeof item.filename !== 'undefined' && !this.isFileTypeExcluded(item.filename)){
                             fpo.fileName = item.filename;
-                            fpo.shortName = Formatting.simplifyFileName(fpo.fileName);
+                            fpo.simpleFileName = Formatting.simplifyFileName(item.filename);
                             this.filePathObjectList.push(fpo);
                         }
                     }
@@ -163,18 +153,35 @@ module.exports.Crawler = class Crawler {
     logError(err) {
         console.log(err);
     }
-    // TODO While items in filePathObjectList 
-    
-    // TODO download objects with fileName to temp path
+    remoteCopy(fpo) {
+        let remote = `${fpo.basePath}${fpo.subPath}${fpo.fileName}`;
+        let local = `${this.homeDirectory}/Temp/${fpo.simpleFileName}`;
+        this.sftp.fastGet(remote, local, (err) => {
+            if (err) throw err;
+            console.log("done!");
+            console.log(fpo);
+            this.working = false;
+        })
+    }
+    copyIfNotExists(fpo){
+        this.working = true;
+        let localPath = `${this.homeDirectory}/Temp/${fpo.simpleFileName}`;
+        let exists = FileSystem.exists(localPath);
+        if(!exists)
+            this.remoteCopy(fpo);
+    }
     start(){
         let newObj = {
             basePath: this.showBoxDirectory
         }
         this.fetchAllFiles(new FilePathObject(newObj));
                     
-        setInterval(() => {
-            console.log(this.filePathObjectList.length);
-            console.log(this.filePathObjectList);
+        let int = setInterval(() => {
+            if(this.filePathObjectList.length > 0 && this.working === false){
+                console.log("working: ", this.working);
+                let fpo = this.filePathObjectList.pop();
+                this.copyIfNotExists(fpo);
+            }
         }, 5000);
             
     }

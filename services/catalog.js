@@ -6,15 +6,11 @@ const Patterns = FileSystem.readJson(PatternPath);
 
 
 module.exports.CatalogService = class CatalogService {
-    static catalogFileName(fileName){
-        let parts = fileName.split('.');
-        let ext = parts.pop();
-        if(parts.length === 1){
-            parts = fileName.split(' ');
-        }
+    static catalogFileName(partsArray){
+        let ext = partsArray.pop();
         try {
-            this.catalogNameParts(parts);
-            this.catalogNameExtension(ext);
+            this.catalogNameParts(partsArray);
+            this.catalogNameExtension(ext.toLowerCase());
         } catch (err) {
             console.log(err);
         }
@@ -22,17 +18,19 @@ module.exports.CatalogService = class CatalogService {
     }
     static catalogNameParts(parts){
         parts.forEach((item, index) => {
-            let matchIndex = Patterns.fileNamePatterns.findIndex(ptrn => ptrn === item);
-            if(index >= 2 && matchIndex === -1){
-                Patterns.fileNamePatterns.push(item);
+            let lowerCaseItem = item.toLowerCase();
+            let exists = Patterns.fileNameExclusions.includes(lowerCaseItem);
+            let commonItem = Patterns.fileNameInclusions.includes(lowerCaseItem);
+            if(!exists && !commonItem){
+                Patterns.fileNameExclusions.push(lowerCaseItem);
                 FileSystem.save(PatternPath, Patterns);
-                console.log(`Added: ${item}`);
+                console.log(`Added: ${lowerCaseItem}`);
             }
         })
     }
     static catalogNameExtension(ext) {
-        if(Patterns.fileNameEtensions.findIndex((xt) => xt === ext) === -1) {
-            Patterns.fileNameEtensions.push(ext);
+        if(!Patterns.fileExtensions.includes(ext)) {
+            Patterns.fileExtensions.push(ext);
             FileSystem.save(PatternPath, Patterns); 
         }
     }

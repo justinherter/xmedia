@@ -1,26 +1,30 @@
 'use strict';
 const FileSystem = require('./fileSystem').FileSystem;
-const Patterns = {};
+const PatternPath = __dirname + '/../lib/patterns.json';
+const Patterns = FileSystem.readJson(PatternPath);
+
 const Catalog = require('./catalog').CatalogService;
 
 module.exports.Formatting = class Formatting {
 
     static simplifyFileName(fileName){
-        Catalog.catalogFileName(fileName);
         
-        let parts = fileName.split('.');
+        let parts = fileName.split('.').join(' ').split(' ');
+        Catalog.catalogFileName(parts);
         return this.processFileName(parts);
+    }
+    
+    static processParts(parts){
+        return parts.filter((item, index) => {
+            let exists = Patterns.fileNameExclusions.includes(item.toLowerCase());
+            return (!exists && (item !== "" || item !== " "))
+        }).map((i) => {
+            return i.replace(/(^[0-9]{4})/g, '($1)');
+        })
     }
     static processFileName(partsArray){
         let ext = partsArray.pop();
-        let parts = this.proccessParts(partsArray);
+        let parts = this.processParts(partsArray);
         return `${parts.join(' ')}.${ext}`;
-    }
-    static processParts(parts){
-        Patterns = FileSystem.readJson('../lib/patterns.json');
-        return parts.map((item, index) => {
-            let matchIndex = Patterns.fileNamePatterns.findIndex(ptrn => ptrn === item);
-            return (index === -1) ? true : false;  
-        })
     }
 }

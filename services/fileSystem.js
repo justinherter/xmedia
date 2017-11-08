@@ -18,4 +18,7 @@ module.exports.FileSystem = class FileSystem {
     static read(path){
         return FS.readFileSync(path);
     }
+    static exists(path) {
+        return FS.existsSync(path);
+    }
 }
