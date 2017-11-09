@@ -19,7 +19,7 @@ module.exports.Crawler = class Crawler {
         this.sftp = sftp;
         this.complete = false;
         this.filePathObjectList = [];
-        this.working = false;
+        this.isWorking = false;
     }
     
     fetchShowBoxDownloads(){
@@ -159,16 +159,19 @@ module.exports.Crawler = class Crawler {
         this.sftp.fastGet(remote, local, (err) => {
             if (err) throw err;
             console.log("done!");
-            console.log(fpo);
-            this.working = false;
+            this.isWorking = false;
         })
     }
     copyIfNotExists(fpo){
-        this.working = true;
         let localPath = `${this.homeDirectory}/Temp/${fpo.simpleFileName}`;
         let exists = FileSystem.exists(localPath);
-        if(!exists)
+        if(!exists) {
+            this.isWorking = true;
             this.remoteCopy(fpo);
+        } else {
+            console.log('exists: ',fpo.fileName);
+        }
+            
     }
     start(){
         let newObj = {
@@ -177,11 +180,16 @@ module.exports.Crawler = class Crawler {
         this.fetchAllFiles(new FilePathObject(newObj));
                     
         let int = setInterval(() => {
-            if(this.filePathObjectList.length > 0 && this.working === false){
-                console.log("working: ", this.working);
+            if(this.filePathObjectList.length > 0 && this.isWorking === false){
                 let fpo = this.filePathObjectList.pop();
+                console.log("processing item:", fpo);
+                
                 this.copyIfNotExists(fpo);
+            } else {
+                console.log('fpoList: ',this.filePathObjectList.length);
+                console.log('is working: ',this.isWorking);
             }
+            // console.log(this.filePathObjectList);
         }, 5000);
             
     }

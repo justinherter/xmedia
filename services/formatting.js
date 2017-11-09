@@ -10,7 +10,7 @@ module.exports.Formatting = class Formatting {
     static simplifyFileName(fileName){
         
         let parts = fileName.split('.').join(' ').split(' ');
-        Catalog.catalogFileName(parts);
+        Catalog.catalogFileName(parts.slice());
         return this.processFileName(parts);
     }
     
