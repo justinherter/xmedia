@@ -13,7 +13,9 @@ module.exports.Formatting = class Formatting {
         Catalog.catalogFileName(parts.slice());
         return this.processFileName(parts);
     }
-    
+    static trimFileExtension(fileName){
+        return fileName.split(".")[0];
+    }
     static processParts(parts){
         return parts.filter((item, index) => {
             let exists = Patterns.fileNameExclusions.includes(item.toLowerCase());

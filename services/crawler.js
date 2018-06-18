@@ -6,7 +6,7 @@ const Formatting = require('./formatting').Formatting;
 const FileSystem = require('./fileSystem').FileSystem;
 const FilePathObject = require('../models/filePathObject').FilePathObject;
 const PatternPath = __dirname + '/../lib/patterns.json';
-
+const MediaService = require('./media').MediaService;
 const Patterns = FileSystem.readJson(PatternPath);
 
 module.exports.Crawler = class Crawler {
@@ -101,17 +101,54 @@ module.exports.Crawler = class Crawler {
             return (item.subPath === obj.subPath && item.fileName === obj.fileName)
         })
         this.filePathObjectList.splice(index, 1);
-        //this.dropDirectory(obj);
     }
-    dropDirectory(obj){
+    dropFile(obj) {
+        let path = `${obj.basePath}${obj.subPath}${obj.fileName}`
         return new Promise((resolve, reject) => {
-            this.sftp.rmdir(obj.basePath + obj.subPath, function(err) {
+            this.sftp.unlink(path, (err) => {
                 if (err) reject(err);
-                
-                resolve();
+                else resolve();
             });
+        });
+        
+    }
+    dropFiles(files){
+        files.forEach((item) => {
+            let promise = this.dropFile(item)
+            promise.then().catch((err) => console.log(err));
         })
     }
+    dropDirectory(obj){
+        console.log(`drop directory`);
+        return new Promise((resolve, reject) => {
+            let path = obj.basePath + obj.subPath;
+            this.readDirectory(path).then((list) => {
+                console.log(`-- directory list length: ${list.length}`);
+                console.log(list);
+                if (list.length === 0){
+                    this.sftp.rmdir(path, function(err) {
+                        if (err) reject(err);
+                        else resolve();
+                    });
+                } else {
+                    let map = list.forEach((item, index) => {
+                        let isDir = this.isDirectory(item);
+                        let fpo = new FilePathObject({
+                            basePath: obj.basePath,
+                            subPath: (isDir) ? `${obj.subPath}${item.filename}/` : obj.subPath,
+                            fileName: (isDir) ? obj.fileName : item.filename,
+                            simpleFileName: obj.simpleFileName
+                        });
+                        (isDir) ? this.dropDirectory(fpo) : this.dropFile(fpo);
+                    });
+                }
+            }).catch((err) =>{
+                reject(err);
+            })
+            
+        })
+    }
+    
     isFileTypeExcluded(fileName) {
         let ext = fileName.split('.').pop().toLowerCase();
         return Patterns.fileExtensionExclusions.includes(ext);
@@ -123,7 +160,9 @@ module.exports.Crawler = class Crawler {
         let fileList = this.readDirectory(basePath + subPath);
         fileList.then((list) => {
             if (list.length === 0) {
-                this.dropItemFromList(filePathObject);
+                let drop = this.dropDirectory(filePathObject)
+                drop.then(console.log(`successfully dropped: ${subPath}`)).catch(err => console.log(err));
+
             } else {
                 list.forEach((item) => {
                     if (!Patterns.directoryNameExclusions.includes(item.filename)){
@@ -162,16 +201,23 @@ module.exports.Crawler = class Crawler {
             this.isWorking = false;
         })
     }
+    
     copyIfNotExists(fpo){
-        let localPath = `${this.homeDirectory}/Temp/${fpo.simpleFileName}`;
-        let exists = FileSystem.exists(localPath);
+        let exists = MediaService.mediaExistsOnServer(fpo.simpleFileName, this.homeDirectory);
+        console.log(`exists on server? ${exists}`);
+
         if(!exists) {
             this.isWorking = true;
+            console.log('saving media to server: ',fpo.simpleFileName);
             this.remoteCopy(fpo);
         } else {
-            console.log('exists: ',fpo.fileName);
+            let drop = (fpo.fileName === '') ? this.dropDirectory(fpo) : this.dropFile(fpo);
+            drop.then(()=>{
+                console.log('removed media from tv node: ',fpo.fileName);
+            }).catch((err)=>{
+                console.log('error: ',err);
+            });
         }
-            
     }
     start(){
         let newObj = {
@@ -185,9 +231,9 @@ module.exports.Crawler = class Crawler {
                 console.log("processing item:", fpo);
                 
                 this.copyIfNotExists(fpo);
-            } else {
-                console.log('fpoList: ',this.filePathObjectList.length);
-                console.log('is working: ',this.isWorking);
+            } else if(this.filePathObjectList.length === 0 && this.isWorking === false){
+                clearInterval(int);
+                process.exit();
             }
             // console.log(this.filePathObjectList);
         }, 5000);
