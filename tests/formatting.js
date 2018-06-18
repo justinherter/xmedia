@@ -17,7 +17,9 @@ describe("Formatting Tests", () => {
         var newObject = new FilePathObject({
             basePath: '/storage/self/primary/show_box/',
             subPath: 'The Lion King 1 1.2 (2004) [1080p]/',
-            fileName: 'The.Lion.King.1.1.2.2004.1080p.BluRay.x264.YIFY.mp4'
+            //fileName: 'The.Lion.King.1.1.2.2004.1080p.BluRay.x264.YIFY.mp4'
+            fileName: 'How.the.Grinch.Stole.Christmas.2000.1080p.BrRip.x264.BOKUTOX.YIFY.mp4'
+            
             // fileName: 'My Little Pony The Movie (2017) x804 (1080p) DD5.1 - 2.0 x264 Phun Psyz.mp4',
         })
         var go = () => {
@@ -25,9 +27,9 @@ describe("Formatting Tests", () => {
         }
         
         
-        // it("simplify file name", () => {
-        //     console.log(go());
-        // })
+        it("simplify file name", () => {
+            console.log(go());
+        })
         // it("reformat patterns", () => {
         //     Patterns.fileNamePatterns = Patterns.fileNamePatterns.map(i => i.toLowerCase());
         //     FileSystem.save(PatternPath, Patterns);
@@ -39,11 +41,11 @@ describe("Formatting Tests", () => {
             });
         }
         
-        it("de-dupe patterns", () => {
-            for (let prop in Patterns){
-                Patterns[prop] = uniq(Patterns[prop]);
-            }
-            FileSystem.save(PatternPath, Patterns);
-        })
+        // it("de-dupe patterns", () => {
+        //     for (let prop in Patterns){
+        //         Patterns[prop] = uniq(Patterns[prop]);
+        //     }
+        //     FileSystem.save(PatternPath, Patterns);
+        // })
     })
 })

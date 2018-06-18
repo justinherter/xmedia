@@ -11,10 +11,11 @@ const FilePathObject = require('../models/filePathObject').FilePathObject;
 
 
 describe("ShowBox Tests", () => {
+    
     describe("TV Node", () => {
         var newObject = new FilePathObject({
             basePath: '/storage/self/primary/show_box/',
-            subPath: 'Trolls (2016) [1080p] [YTS.AG]/',
+            subPath: 'How the Grinch Stole Christmas (2000) [1080p]/',
             fileName: ''
         })
         var go = () => {
@@ -38,11 +39,12 @@ describe("ShowBox Tests", () => {
                 username: 'root',
                 password: 'password'
             });
+            setInterval(()=>{},5000);
         }
         
         
         it("Connect to server and return contents of directory.", () => {
-            go();
+            return go();
         })
     })
 })
