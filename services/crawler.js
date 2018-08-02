@@ -194,7 +194,7 @@ module.exports.Crawler = class Crawler {
     }
     remoteCopy(fpo) {
         let remote = `${fpo.basePath}${fpo.subPath}${fpo.fileName}`;
-        let local = `${this.homeDirectory}/Temp/${fpo.simpleFileName}`;
+        let local = `${this.homeDirectory}Temp/${fpo.simpleFileName}`;
         this.sftp.fastGet(remote, local, (err) => {
             if (err) throw err;
             console.log("done!");
@@ -233,7 +233,7 @@ module.exports.Crawler = class Crawler {
                 this.copyIfNotExists(fpo);
             } else if(this.filePathObjectList.length === 0 && this.isWorking === false){
                 clearInterval(int);
-                process.exit();
+                return true;
             }
             // console.log(this.filePathObjectList);
         }, 5000);

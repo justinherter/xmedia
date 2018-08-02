@@ -21,7 +21,7 @@ modules.exports.TMDB = class TMDB {
         search: function() {},
         getRAndR: function(id) {
             let url = `${_self.baseUrl}${id}${Endpoints.ratingAndReleaseDates}`;
-            url += `?${params.toHttpParams()}`
+            url += `?${params.x_toHttpParams()}`
         }
     }
     
