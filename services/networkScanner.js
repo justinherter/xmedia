@@ -10,8 +10,8 @@ module.exports.NetScan = class NetScan {
                 scanner.scan(devices => {
                     resolve(devices);
                 });
-            } catch {
-                reject("scan failed")
+            } catch (err){
+                reject("scan failed: " + err);
             }
         })
     }
