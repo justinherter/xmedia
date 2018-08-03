@@ -17,12 +17,13 @@ module.exports.CatalogService = class CatalogService {
         
     }
     static catalogNameParts(parts){
-        parts.forEach((item, index) => {
+        parts.forEach((item) => {
             let lowerCaseItem = item.toLowerCase();
-            let exists = Patterns.fileNameExclusions.includes(lowerCaseItem);
-            let commonItem = Patterns.fileNameInclusions.includes(lowerCaseItem);
-            if(!exists && !commonItem){
-                Patterns.fileNameExclusions.push(lowerCaseItem);
+            let excluded = Patterns.fileNameExclusions.includes(lowerCaseItem);
+            let included = Patterns.fileNameInclusions.includes(lowerCaseItem);
+            if(excluded || included) return;
+            if(!included){
+                Patterns.fileNameInclusions.push(lowerCaseItem);
                 FileSystem.save(PatternPath, Patterns);
                 console.log(`Added: ${lowerCaseItem}`);
             }

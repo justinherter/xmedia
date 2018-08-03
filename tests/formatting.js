@@ -10,7 +10,9 @@ const FilePathObject = require('../models/filePathObject').FilePathObject;
 
 const FileSystem = require('../services/fileSystem').FileSystem;
 const PatternPath = __dirname + '/../lib/patterns.json';
+const FPOPath = __dirname + '/samples/fileNames.json';
 const Patterns = FileSystem.readJson(PatternPath);
+const FPOs = FileSystem.readJson(FPOPath);
 
 describe("Formatting Tests", () => {
     describe("FileName", () => {
@@ -23,12 +25,21 @@ describe("Formatting Tests", () => {
             // fileName: 'My Little Pony The Movie (2017) x804 (1080p) DD5.1 - 2.0 x264 Phun Psyz.mp4',
         })
         var go = () => {
-            return Service.simplifyFileName(newObject.fileName);
+            if(FPOs.length > 0){
+                //console.log("FPOs: ", FPOs);
+
+                FPOs.forEach((item) => {
+                    console.log("item fileName: ", item.fileName);
+                    var simple = Service.simplifyFileName(item.fileName);
+                    console.log(simple);
+                })
+            }
+            
         }
         
         
         it("simplify file name", () => {
-            console.log(go());
+            go();
         })
         // it("reformat patterns", () => {
         //     Patterns.fileNamePatterns = Patterns.fileNamePatterns.map(i => i.toLowerCase());

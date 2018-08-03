@@ -1,0 +1,44 @@
+[
+    {
+        "basePath": "/storage/self/primary/show_box/",
+        "subPath": "Stuart.Little.II.2002.1080p.BluRay.H264.AAC-RARBG/",
+        "fileName": "Stuart.Little.II.2002.1080p.BluRay.H264.AAC-RARBG.mp4",
+        "_simpleFileName": "Little.mp4",
+        "simpleNameOnly": "Little" 
+    },
+    {
+        "basePath": "/storage/self/primary/show_box/",
+        "subPath": "The Sword in the Stone (1963) 1080p [Eng 5.1 & Spa 2.0] Blu-ray/",
+        "fileName": "The Sword in the Stone (1963) 1080p [Eng 5.1 & Spa 2.0] Blu-ray.mp4",
+        "_simpleFileName": "The the.mp4",
+        "simpleNameOnly": "The the" 
+    },
+    {
+        "basePath": "/storage/self/primary/show_box/",
+        "subPath": "Earth One Amazing Day 2017 1080p BluRay x264 AAC - Hon3y/",
+        "fileName": "Earth One Amazing Day 2017 1080p BluRay x264 AAC - Hon3y.mkv",
+        "_simpleFileName": "(2017).mkv",
+        "simpleNameOnly": "(2017)" 
+    },
+    {
+        "basePath": "/storage/self/primary/show_box/",
+        "subPath": "Bolt (2008) [1080p]/",
+        "fileName": "Bolt.2008.1080p.BluRay.x264.YIFY.mp4",
+        "_simpleFileName": ".mp4",
+        "simpleNameOnly": "" 
+    },
+    {
+        "basePath": "/storage/self/primary/show_box/",
+        "subPath": "Bambi Diamond Edition BR x264-d3g/",
+        "fileName": "Bambi 1942 Diamond Edition BluRay 1080p Dts-HD Ma7.1 x264-d3g.mkv",
+        "_simpleFileName": ".mkv",
+        "simpleNameOnly": "" 
+    },
+    {
+        "basePath": "/storage/self/primary/show_box/",
+        "subPath": "The Jungle Book (1967) [1080p] [YTS.AG]/",
+        "fileName": "The.Jungle.Book.1967.1080p.BluRay.x264-[YTS.AG].mp4",
+        "_simpleFileName": "The.mp4",
+        "simpleNameOnly": "The" 
+    }
+]

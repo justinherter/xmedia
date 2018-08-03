@@ -2,6 +2,7 @@
 const FileSystem = require('./fileSystem').FileSystem;
 const PatternPath = __dirname + '/../lib/patterns.json';
 const Patterns = FileSystem.readJson(PatternPath);
+require('../lib/extensions').Extensions.All();
 
 const Catalog = require('./catalog').CatalogService;
 
@@ -17,9 +18,9 @@ module.exports.Formatting = class Formatting {
         return fileName.split(".")[0];
     }
     static processParts(parts){
-        return parts.filter((item, index) => {
+        return parts.filter(item => {
             let exists = Patterns.fileNameExclusions.includes(item.toLowerCase());
-            return (!exists && (item !== "" || item !== " "))
+            return (!exists && !item.x_isNullOrEmpty())
         }).map((i) => {
             return i.replace(/(^[0-9]{4})/g, '($1)');
         })
