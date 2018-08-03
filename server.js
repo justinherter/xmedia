@@ -1,7 +1,7 @@
 'use strict';
 const Service = require('./services/crawler').Crawler;
 const Client = require('ssh2').Client;
-const Connection = new Client();
+
 const Config = require('./config').Config;
 const NetScan = require('./services/networkScanner').NetScan;
 require('dotenv').load();
@@ -31,6 +31,7 @@ function crawl(){
         console.log("working: ", working);
         console.log("node: ", node);
         try {
+            var Connection = new Client();
             Connection.on('ready', function() {
                 console.log('Client :: ready');
                 console.log(Service);
@@ -42,6 +43,7 @@ function crawl(){
                     .then((isWorking) => {
                         console.log("is working: ", isWorking);
                         working = isWorking
+                        Connection.end();
                     });
                 });
             }).connect({
