@@ -220,23 +220,30 @@ module.exports.Crawler = class Crawler {
         }
     }
     start(){
-        let newObj = {
-            basePath: this.showBoxDirectory
-        }
-        this.fetchAllFiles(new FilePathObject(newObj));
-                    
-        let int = setInterval(() => {
-            if(this.filePathObjectList.length > 0 && this.isWorking === false){
-                let fpo = this.filePathObjectList.pop();
-                console.log("processing item:", fpo);
-                
-                this.copyIfNotExists(fpo);
-            } else if(this.filePathObjectList.length === 0 && this.isWorking === false){
-                clearInterval(int);
-                return true;
+        return new Promise((resolve, reject)=>{
+            let newObj = {
+                basePath: this.showBoxDirectory
             }
-            // console.log(this.filePathObjectList);
-        }, 5000);
+            try {
+                this.fetchAllFiles(new FilePathObject(newObj));
+                        
+                let int = setInterval(() => {
+                    if(this.filePathObjectList.length > 0 && this.isWorking === false){
+                        let fpo = this.filePathObjectList.pop();
+                        console.log("processing item:", fpo);
+                        
+                        this.copyIfNotExists(fpo);
+                    } else if(this.filePathObjectList.length === 0 && this.isWorking === false){
+                        clearInterval(int);
+                        console.log("########## resolve process");
+                        resolve(false);
+                    }
+                    // console.log(this.filePathObjectList);
+                }, 5000);
+            } catch (err) {
+                reject(err);
+            }
             
+        });
     }
 } 

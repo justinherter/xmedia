@@ -37,7 +37,12 @@ function crawl(){
                 Connection.sftp(function(err, sftp) {
                     if (err) throw err;
                     let crawler = new Service(sftp);
-                    working = !crawler.start();
+                    !crawler.start()
+                    .catch(err=>console.log(err))
+                    .then((isWorking) => {
+                        console.log("is working: ", isWorking);
+                        working = isWorking
+                    });
                 });
             }).connect({
                 algorithms: { serverHostKey: [ 'ssh-rsa', 'ssh-dss' ] },
@@ -52,7 +57,6 @@ function crawl(){
             working = false;
         }
         var interval = setInterval(() => {
-            console.log("&&&&&&&&&& interval");
             if(!working){
                 clearInterval(interval);
                 crawl();
