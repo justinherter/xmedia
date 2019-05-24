@@ -131,7 +131,7 @@ module.exports.Crawler = class Crawler {
                         else resolve();
                     });
                 } else {
-                    let map = list.forEach((item, index) => {
+                    list.forEach((item) => {
                         let isDir = this.isDirectory(item);
                         let fpo = new FilePathObject({
                             basePath: obj.basePath,

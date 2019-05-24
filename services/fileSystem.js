@@ -21,4 +21,10 @@ module.exports.FileSystem = class FileSystem {
     static exists(path) {
         return FS.existsSync(path);
     }
+    static readDirectory(path) {
+        return FS.readdirSync(path);
+    }
+    static rename(oldPath, newPath) {
+        return FS.renameSync(oldPath, newPath);
+    }
 }
