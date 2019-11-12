@@ -4,9 +4,13 @@
   "description": "Home Media Application",
   "main": "server.js",
   "dependencies": {
+    "chalk": "^2.4.2",
+    "clear": "^0.1.0",
     "dotenv": "^4.0.0",
+    "figlet": "^1.2.4",
     "local-network-scanner": "^0.1.1",
     "moment": "^2.18.1",
+    "path": "^0.12.7",
     "simple-ssh": "^1.0.0",
     "ssh2": "^0.5.5",
     "uuid4": "^1.0.0"
@@ -16,7 +20,9 @@
     "mocha": "^3.5.3"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha inspect --reporter spec"
+    "test": "./node_modules/.bin/mocha inspect --reporter spec",
+    "syncPatterns": "node ./tools/cliTools.js mergePatternFiles",
+    "testTools": "node ./tools/cliTools.js test"
   },
   "author": "Justin Herter",
   "license": "ISC"

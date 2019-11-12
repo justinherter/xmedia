@@ -1,5 +1,7 @@
 'use strict';
 const FS = require('fs');
+var Path = require('path');
+
 
 module.exports.FileSystem = class FileSystem {
     static exists(path){
@@ -27,4 +29,5 @@ module.exports.FileSystem = class FileSystem {
     static rename(oldPath, newPath) {
         return FS.renameSync(oldPath, newPath);
     }
+    
 }

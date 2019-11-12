@@ -1,25 +1,40 @@
 'use strict';
-const Service = require('./services/formatting').Formatting;
+const Formatting = require('./services/formatting').Formatting;
 const Config = require('./config').Config;
 require('dotenv').load();
-const LocalTempPath = '/data/temp';
-const LocalStagedPath = '/data/staged';
+const LocalTempPath = '/Volumes/Storage/Movies/MovieDownloads'; // '/data/temp';
+const LocalStagedPath = '/Volumes/Storage/Movies/KidsMovies'; // '/data/staged';
 const FileSystem = require('./services/fileSystem').FileSystem;
+const FS = require('fs');
+var Path = require('path');
 
-function run() {
-    console.log('+++++++++++++++++++++++++++ : ',process.env['STAGE']);
-    let files = FileSystem.readDirectory(LocalTempPath);
-    if (files.length > 0) {
-        console.log(files);
-        files.forEach(file => {
-            console.log(file);
+function run(startPath, destinationPath, extension) {
+    
 
-            var simple = Service.simplifyFileName(file);
-            console.log(simple);
-            console.log(process.env['STAGE']);
-            if(!process.env['STAGE']) FileSystem.rename(`${LocalTempPath}/${file}`, `${LocalStagedPath}/${simple}`);
-        });
-    }
+        if (!FS.existsSync(startPath)) {
+            console.log("no dir ", startPath);
+            return;
+        }
+
+        var files = FS.readdirSync(startPath);
+        for (var i = 0; i < files.length; i++) {
+            var filename = Path.join(startPath, files[i]);
+            var stat = FS.lstatSync(filename);
+            if (stat.isDirectory()) {
+                run(filename, destinationPath, extension); //recurse
+            }
+            else if (filename.indexOf(extension) >= 0) {
+                console.log(Formatting.simplifyFileName(Path.basename(filename)));
+                let simpleName = Formatting.simplifyFileName(Path.basename(filename));
+                let saveAs = `${destinationPath}/${simpleName}`;
+                FileSystem.rename(filename, saveAs);
+            };
+        };
+
+
+
+
+        
+ 
 }
-
-run();
+run(LocalTempPath, LocalStagedPath, '.mp4');
