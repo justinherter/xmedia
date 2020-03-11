@@ -3,7 +3,7 @@ const Formatting = require('./services/formatting').Formatting;
 const Config = require('./config').Config;
 require('dotenv').load();
 const LocalTempPath = '/Volumes/Storage/Movies/MovieDownloads'; // '/data/temp';
-const LocalStagedPath = '/Volumes/Storage/Movies/KidsMovies'; // '/data/staged';
+const LocalStagedPath = '/Volumes/Storage/Movies/Staged'; // '/data/staged';
 const FileSystem = require('./services/fileSystem').FileSystem;
 const FS = require('fs');
 var Path = require('path');
