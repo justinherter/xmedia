@@ -12,7 +12,7 @@
     "moment": "^2.18.1",
     "path": "^0.12.7",
     "simple-ssh": "^1.0.0",
-    "ssh2": "^0.5.5",
+    "ssh2": "^1.4.0",
     "uuid4": "^1.0.0"
   },
   "devDependencies": {
